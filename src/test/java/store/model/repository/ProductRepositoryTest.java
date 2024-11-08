@@ -1,5 +1,6 @@
 package store.model.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import store.model.domain.Product;
@@ -14,16 +15,22 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class ProductRepositoryTest {
 
+    public static final String TEST_PRODUCT_FILE_PATH = "src/main/resources/testproducts.md";
+    private ProductRepository productRepository;
+
+    @BeforeEach
+    void setUp() {
+        productRepository = new ProductRepository();
+    }
+
     @Test
     @DisplayName("마크다운 파일의 라인 수와 로드된 제품 개수가 일치하는지 검증한다.")
     void loadProductsFromMarkdownFile() throws IOException {
         // given
-        String filePath = "src/main/resources/products.md";
-        ProductRepository productRepository = new ProductRepository();
-        productRepository.loadProducts(filePath);
+        productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
 
         // 헤더 제외
-        int expectedLineCount = (int) Files.lines(Paths.get(filePath)).skip(1).count();
+        int expectedLineCount = (int) Files.lines(Paths.get(TEST_PRODUCT_FILE_PATH)).skip(1).count();
 
         // when
         List<Product> actualProducts = productRepository.findAll();
@@ -37,9 +44,7 @@ class ProductRepositoryTest {
     @DisplayName("특정 타입과 이름으로 제품을 정확히 찾을 수 있다.")
     void findByTypeAndName() throws IOException {
         // given
-        String filePath = "src/main/resources/products.md";
-        ProductRepository productRepository = new ProductRepository();
-        productRepository.loadProducts(filePath);
+        productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
 
         String type = "promotion";
         String name = "콜라";
@@ -61,7 +66,6 @@ class ProductRepositoryTest {
     void loadProductsWithInvalidFilePath() {
         // given
         String invalidFilePath = "src/main/resources/nonexistent.md";
-        ProductRepository productRepository = new ProductRepository();
 
         // then
         assertThatThrownBy(() -> productRepository.loadProducts(invalidFilePath))
@@ -72,9 +76,6 @@ class ProductRepositoryTest {
     @Test
     @DisplayName("파일을 로드하지 않은 상태에서 조회하면 빈 리스트를 반환한다.")
     void findAllWithoutLoadingFile() {
-        // given
-        ProductRepository productRepository = new ProductRepository();
-
         // when
         List<Product> actualProducts = productRepository.findAll();
 
