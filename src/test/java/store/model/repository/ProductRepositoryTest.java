@@ -40,9 +40,9 @@ class ProductRepositoryTest {
         ProductRepository productRepository = new ProductRepository();
         productRepository.loadProducts(filePath);
 
-        // 특정 제품의 타입과 이름 설정 (예: promotion 타입의 "콜라")
         String type = "promotion";
         String name = "콜라";
+
         Product expectedProduct = new Product(name, 1000, "탄산2+1");
 
         // when
