@@ -84,4 +84,60 @@ class ProductRepositoryTest {
                 .isEmpty();
     }
 
+
+    @Test
+    @DisplayName("getStock 메서드가 제품의 정확한 재고 수량을 반환한다.")
+    void getStock_ShouldReturnCorrectStock() throws IOException {
+        // given
+        productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
+
+        String type = "regular";
+        String name = "콜라";
+
+        // when
+        int stock = productRepository.getStock(type, name);
+
+        // then
+        assertThat(stock).isEqualTo(10);
+    }
+
+    @Test
+    @DisplayName("reduceStock 메서드가 재고를 올바르게 감소시킨다.")
+    void reduceStock_ShouldDecreaseStockCorrectly() throws IOException {
+        // given
+        productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
+
+        String type = "promotion";
+        String name = "콜라";
+
+        int initialStock = productRepository.getStock(type, name);
+        int quantityToReduce = 5;
+
+        // when
+        boolean result = productRepository.reduceStock(type, name, quantityToReduce);
+
+        // then
+        assertThat(result).isTrue();
+        assertThat(productRepository.getStock(type, name)).isEqualTo(initialStock - quantityToReduce);
+    }
+
+    @Test
+    @DisplayName("reduceStock 메서드가 재고 부족 시 감소를 거부한다.")
+    void reduceStock_ShouldFailWhenInsufficientStock() throws IOException {
+        // given
+        productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
+
+        String type = "promotion";
+        String name = "콜라";
+
+        int initialStock = productRepository.getStock(type, name);
+        int quantityToReduce = initialStock + 1;
+
+        // when
+        boolean result = productRepository.reduceStock(type, name, quantityToReduce);
+
+        // then
+        assertThat(result).isFalse(); // 감소 실패를 확인
+        assertThat(productRepository.getStock(type, name)).isEqualTo(initialStock);
+    }
 }
