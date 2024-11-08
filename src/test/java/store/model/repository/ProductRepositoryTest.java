@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class ProductRepositoryTest {
 
@@ -34,7 +35,7 @@ class ProductRepositoryTest {
 
     @Test
     @DisplayName("특정 타입과 이름으로 제품을 정확히 찾을 수 있다.")
-    void findByTypeAndName() {
+    void findByTypeAndName() throws IOException {
         // given
         String filePath = "src/main/resources/products.md";
         ProductRepository productRepository = new ProductRepository();
@@ -53,6 +54,33 @@ class ProductRepositoryTest {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expectedProduct);
+    }
+
+    @Test
+    @DisplayName("잘못된 파일 경로로 로드 시 예외가 발생한다.")
+    void loadProductsWithInvalidFilePath() {
+        // given
+        String invalidFilePath = "src/main/resources/nonexistent.md";
+        ProductRepository productRepository = new ProductRepository();
+
+        // then
+        assertThatThrownBy(() -> productRepository.loadProducts(invalidFilePath))
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("No such file");
+    }
+
+    @Test
+    @DisplayName("파일을 로드하지 않은 상태에서 조회하면 빈 리스트를 반환한다.")
+    void findAllWithoutLoadingFile() {
+        // given
+        ProductRepository productRepository = new ProductRepository();
+
+        // when
+        List<Product> actualProducts = productRepository.findAll();
+
+        // then
+        assertThat(actualProducts)
+                .isEmpty();
     }
 
 }

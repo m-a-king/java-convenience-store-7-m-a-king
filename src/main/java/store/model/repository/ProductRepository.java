@@ -10,7 +10,7 @@ import java.util.*;
 public class ProductRepository {
     private final Map<String, Map<String, Product>> products = new LinkedHashMap<>();
 
-    public void loadProducts(String filePath) {
+    public void loadProducts(String filePath) throws IOException {
         Map<String, Product> regularProducts = new LinkedHashMap<>();
         Map<String, Product> promotionProducts = new LinkedHashMap<>();
 
@@ -35,9 +35,6 @@ public class ProductRepository {
 
             products.put("regular", regularProducts);
             products.put("promotion", promotionProducts);
-
-        } catch (IOException | NumberFormatException e) {
-            System.out.println(e.getMessage());
         }
     }
 
