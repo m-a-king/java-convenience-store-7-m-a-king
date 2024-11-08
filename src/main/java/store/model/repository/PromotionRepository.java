@@ -14,7 +14,7 @@ import java.util.Map;
 public class PromotionRepository {
     private final Map<String, Promotion> promotions = new LinkedHashMap<>();
 
-    public void loadPromotions(String filePath) {
+    public void loadPromotions(String filePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             br.readLine(); // 헤더 생략
 
@@ -30,8 +30,6 @@ public class PromotionRepository {
                 Promotion promotion = new Promotion(name, buy, get, startDate, endDate);
                 promotions.put(name, promotion);
             }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
         }
     }
 

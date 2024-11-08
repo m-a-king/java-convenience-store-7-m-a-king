@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class PromotionRepositoryTest {
 
@@ -35,7 +36,7 @@ class PromotionRepositoryTest {
 
     @Test
     @DisplayName("이름으로 프로모션을 정확히 찾을 수 있다.")
-    void findByName() {
+    void findByName() throws IOException {
         // given
         String filePath = "src/main/resources/promotions.md";
         PromotionRepository promotionRepository = new PromotionRepository();
@@ -53,5 +54,32 @@ class PromotionRepositoryTest {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expectedPromotion);
+    }
+
+    @Test
+    @DisplayName("잘못된 파일 경로로 로드 시 예외가 발생한다.")
+    void loadProductsWithInvalidFilePath() {
+        // given
+        String invalidFilePath = "src/main/resources/nonexistent.md";
+        PromotionRepository promotionRepository = new PromotionRepository();
+
+        // then
+        assertThatThrownBy(() -> promotionRepository.loadPromotions(invalidFilePath))
+                .isInstanceOf(IOException.class)
+                .hasMessageContaining("No such file");
+    }
+
+    @Test
+    @DisplayName("파일을 로드하지 않은 상태에서 조회하면 빈 리스트를 반환한다.")
+    void findAllWithoutLoadingFile() {
+        // given
+        PromotionRepository promotionRepository = new PromotionRepository();
+
+        // when
+        List<Promotion> expectedPromotion = promotionRepository.findAll();
+
+        // then
+        assertThat(expectedPromotion)
+                .isEmpty();
     }
 }
