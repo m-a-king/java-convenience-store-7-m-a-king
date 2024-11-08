@@ -3,6 +3,8 @@ package store.model.repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import store.model.domain.Product;
 
 import java.io.IOException;
@@ -140,4 +142,32 @@ class ProductRepositoryTest {
         assertThat(result).isFalse(); // 감소 실패를 확인
         assertThat(productRepository.getStock(type, name)).isEqualTo(initialStock);
     }
+
+    @ParameterizedTest
+    @DisplayName("재고를 연속으로 두 번 감소시키고 남은 개수를 확인한다.")
+    @CsvSource({
+            "promotion, 콜라, 3, 4, true",  // 충분한 재고로 두 번 감소
+            "promotion, 콜라, 5, 6, false"  // 두 번째 감소 시 재고 부족
+    })
+    void reduceStock_ShouldHandleConsecutiveReductions(String type, String name, int firstReduce, int secondReduce, boolean expectedResult) throws IOException {
+        // given
+        productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
+        int initialStock = productRepository.getStock(type, name);
+
+        // when
+        boolean firstResult = productRepository.reduceStock(type, name, firstReduce);
+        int stockAfterFirstReduction = productRepository.getStock(type, name);
+
+        boolean secondResult = productRepository.reduceStock(type, name, secondReduce);
+        int finalStock = productRepository.getStock(type, name);
+
+        // then
+        assertThat(secondResult).isEqualTo(expectedResult);
+        if (expectedResult) {
+            assertThat(finalStock).isEqualTo(stockAfterFirstReduction - secondReduce);
+            return;
+        }
+        assertThat(finalStock).isEqualTo(stockAfterFirstReduction);
+    }
+
 }
