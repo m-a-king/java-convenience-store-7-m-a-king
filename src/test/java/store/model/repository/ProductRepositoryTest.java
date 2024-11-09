@@ -110,19 +110,20 @@ class ProductRepositoryTest {
         // given
         productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
 
-        String type = "regular";
         String name = "콜라";
         int price = 1000;
+        String type = "regular";
+        Product cola = new Product(name, price, type);
 
-        int initialStock = productRepository.findStockByProduct(new Product(name, price, type));
+        int initialStock = productRepository.findStockByProduct(cola);
         int quantityToReduce = 5;
 
         // when
-        boolean result = productRepository.reduceStock(type, name, quantityToReduce);
+        boolean result = productRepository.reduceStock(cola, quantityToReduce);
 
         // then
         assertThat(result).isTrue();
-        assertThat(productRepository.findStockByProduct(new Product(name, price, type))).isEqualTo(initialStock - quantityToReduce);
+        assertThat(productRepository.findStockByProduct(cola)).isEqualTo(initialStock - quantityToReduce);
     }
 
     @Test
@@ -131,15 +132,16 @@ class ProductRepositoryTest {
         // given
         productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
 
-        String type = "promotion";
         String name = "콜라";
         int price = 1000;
+        String type = "promotion";
+        Product cola = new Product(name, price, type);
 
         int initialStock = productRepository.findStockByProduct(new Product(name, price, type));
         int quantityToReduce = initialStock + 1;
 
         // when
-        boolean result = productRepository.reduceStock(type, name, quantityToReduce);
+        boolean result = productRepository.reduceStock(cola, quantityToReduce);
 
         // then
         assertThat(result).isFalse(); // 감소 실패를 확인
@@ -156,12 +158,13 @@ class ProductRepositoryTest {
         // given
         productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
         int initialStock = productRepository.findStockByProduct(new Product(name, price, type));
+        Product cola = new Product(name, price, type);
 
         // when
-        productRepository.reduceStock(type, name, firstReduce);
+        productRepository.reduceStock(cola, firstReduce);
         int stockAfterFirstReduction = productRepository.findStockByProduct(new Product(name, price, type));
 
-        boolean secondResult = productRepository.reduceStock(type, name, secondReduce);
+        boolean secondResult = productRepository.reduceStock(cola, secondReduce);
         int finalStock = productRepository.findStockByProduct(new Product(name, price, type));
 
         // then

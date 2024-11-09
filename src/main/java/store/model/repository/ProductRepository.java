@@ -57,24 +57,31 @@ public class ProductRepository {
     }
 
     public int findStockByProduct(Product product) {
-        if (product.getPromotion().equals("null")) {
-            return stock.get("regular").getOrDefault(product.getName(), 0);
-        }
-        return stock.get("promotion").getOrDefault(product.getName(), 0);
+        Map<String, Integer> typeStock = getStockMapByProduct(product);
+        return typeStock.getOrDefault(product.getName(), 0);
     }
 
-    public boolean reduceStock(String type, String name, int quantity) {
-        Map<String, Integer> typeStock = stock.get(type);
-        if (typeStock == null || !typeStock.containsKey(name)) {
+    public boolean reduceStock(Product product, int quantity) {
+        Map<String, Integer> typeStock = getStockMapByProduct(product);
+
+        if (typeStock == null || !typeStock.containsKey(product.getName())) {
             return false;
         }
 
-        int currentStock = typeStock.get(name);
-        if (currentStock >= quantity) {
-            typeStock.put(name, currentStock - quantity);
-            return true;
+        int currentStock = typeStock.get(product.getName());
+        if (currentStock < quantity) {
+            return false;
         }
-        return false;
+
+        typeStock.put(product.getName(), currentStock - quantity);
+        return true;
+    }
+
+    private Map<String, Integer> getStockMapByProduct(Product product) {
+        if (product.getPromotion().equals("null")) {
+            return stock.get("regular");
+        }
+        return stock.get("promotion");
     }
 
 }

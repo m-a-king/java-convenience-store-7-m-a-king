@@ -73,7 +73,7 @@ class ProductServiceTest {
         int quantity = 5;
 
         // when
-        boolean result = productService.reduceProductStock(type, name, quantity);
+        boolean result = productService.reduceProductStock(cola, quantity);
 
         // then
         assertThat(result).isTrue();

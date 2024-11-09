@@ -1,6 +1,7 @@
 package store.model.service;
 
 import store.dto.ProductWithStockDto;
+import store.model.domain.Product;
 import store.model.repository.ProductRepository;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class ProductService {
                 .toList();
     }
 
-    public boolean reduceProductStock(String type, String name, int quantity) {
-        return productRepository.reduceStock(type, name, quantity);
+    public boolean reduceProductStock(Product product, int quantity) {
+        return productRepository.reduceStock(product, quantity);
     }
 }
