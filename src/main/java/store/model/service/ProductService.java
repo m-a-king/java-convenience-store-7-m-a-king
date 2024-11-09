@@ -1,0 +1,34 @@
+package store.model.service;
+
+import store.dto.ProductWithStockDto;
+import store.model.repository.ProductRepository;
+
+import java.io.IOException;
+import java.util.List;
+
+public class ProductService {
+    private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public void loadProducts(String filePath) throws IOException {
+        productRepository.loadProducts(filePath);
+    }
+
+    public List<ProductWithStockDto> getAllProductDtos() {
+        return productRepository.findAllProduct().stream()
+                .map(product -> new ProductWithStockDto(
+                        product.getName(),
+                        product.getPrice(),
+                        productRepository.findStockByProduct(product),
+                        product.getPromotion()
+                ))
+                .toList();
+    }
+
+    public boolean reduceProductStock(String type, String name, int quantity) {
+        return productRepository.reduceStock(type, name, quantity);
+    }
+}
