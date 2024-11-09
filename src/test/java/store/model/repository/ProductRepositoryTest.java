@@ -35,7 +35,7 @@ class ProductRepositoryTest {
         int expectedLineCount = (int) Files.lines(Paths.get(TEST_PRODUCT_FILE_PATH)).skip(1).count();
 
         // when
-        List<Product> actualProducts = productRepository.findAll();
+        List<Product> actualProducts = productRepository.findAllProduct();
 
         // then
         assertThat(actualProducts.size())
@@ -44,7 +44,7 @@ class ProductRepositoryTest {
 
     @Test
     @DisplayName("특정 타입과 이름으로 제품을 정확히 찾을 수 있다.")
-    void findByTypeAndName() throws IOException {
+    void findProductByTypeAndName() throws IOException {
         // given
         productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
 
@@ -54,7 +54,7 @@ class ProductRepositoryTest {
         Product expectedProduct = new Product(name, 1000, "탄산2+1");
 
         // when
-        Product actualProduct = productRepository.findByTypeAndName(type, name);
+        Product actualProduct = productRepository.findProductByTypeAndName(type, name);
 
         // then
         assertThat(actualProduct)
@@ -77,9 +77,9 @@ class ProductRepositoryTest {
 
     @Test
     @DisplayName("파일을 로드하지 않은 상태에서 조회하면 빈 리스트를 반환한다.")
-    void findAllWithoutLoadingFile() {
+    void findAllProductWithoutLoadingFile() {
         // when
-        List<Product> actualProducts = productRepository.findAll();
+        List<Product> actualProducts = productRepository.findAllProduct();
 
         // then
         assertThat(actualProducts)
@@ -89,15 +89,16 @@ class ProductRepositoryTest {
 
     @Test
     @DisplayName("getStock 메서드가 제품의 정확한 재고 수량을 반환한다.")
-    void getStock_ShouldReturnCorrectStock() throws IOException {
+    void findStock_ShouldReturnCorrectStockByTypeAndName() throws IOException {
         // given
         productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
 
         String type = "regular";
         String name = "콜라";
+        int price = 1000;
 
         // when
-        int stock = productRepository.getStock(type, name);
+        int stock = productRepository.findStockByTypeAndName(new Product(name, price, type));
 
         // then
         assertThat(stock).isEqualTo(10);
@@ -109,10 +110,11 @@ class ProductRepositoryTest {
         // given
         productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
 
-        String type = "promotion";
+        String type = "regular";
         String name = "콜라";
+        int price = 1000;
 
-        int initialStock = productRepository.getStock(type, name);
+        int initialStock = productRepository.findStockByTypeAndName(new Product(name, price, type));
         int quantityToReduce = 5;
 
         // when
@@ -120,7 +122,7 @@ class ProductRepositoryTest {
 
         // then
         assertThat(result).isTrue();
-        assertThat(productRepository.getStock(type, name)).isEqualTo(initialStock - quantityToReduce);
+        assertThat(productRepository.findStockByTypeAndName(new Product(name, price, type))).isEqualTo(initialStock - quantityToReduce);
     }
 
     @Test
@@ -131,8 +133,9 @@ class ProductRepositoryTest {
 
         String type = "promotion";
         String name = "콜라";
+        int price = 1000;
 
-        int initialStock = productRepository.getStock(type, name);
+        int initialStock = productRepository.findStockByTypeAndName(new Product(name, price, type));
         int quantityToReduce = initialStock + 1;
 
         // when
@@ -140,28 +143,29 @@ class ProductRepositoryTest {
 
         // then
         assertThat(result).isFalse(); // 감소 실패를 확인
-        assertThat(productRepository.getStock(type, name)).isEqualTo(initialStock);
+        assertThat(productRepository.findStockByTypeAndName(new Product(name, price, type))).isEqualTo(initialStock);
     }
 
     @ParameterizedTest
     @DisplayName("재고를 연속으로 두 번 감소시키고 남은 개수를 확인한다.")
     @CsvSource({
-            "promotion, 콜라, 3, 4, true",  // 충분한 재고로 두 번 감소
-            "promotion, 콜라, 5, 6, false"  // 두 번째 감소 시 재고 부족
+            "promotion, 콜라, 3, 4, 1000, true",  // 충분한 재고로 두 번 감소
+            "promotion, 콜라, 5, 6, 1000, false"  // 두 번째 감소 시 재고 부족
     })
-    void reduceStock_ShouldHandleConsecutiveReductions(String type, String name, int firstReduce, int secondReduce, boolean expectedResult) throws IOException {
+    void reduceStock_ShouldHandleConsecutiveReductions(String type, String name, int firstReduce, int secondReduce, int price, boolean expectedResult) throws IOException {
         // given
         productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
-        int initialStock = productRepository.getStock(type, name);
+        int initialStock = productRepository.findStockByTypeAndName(new Product(name, price, type));
 
         // when
-        boolean firstResult = productRepository.reduceStock(type, name, firstReduce);
-        int stockAfterFirstReduction = productRepository.getStock(type, name);
+        productRepository.reduceStock(type, name, firstReduce);
+        int stockAfterFirstReduction = productRepository.findStockByTypeAndName(new Product(name, price, type));
 
         boolean secondResult = productRepository.reduceStock(type, name, secondReduce);
-        int finalStock = productRepository.getStock(type, name);
+        int finalStock = productRepository.findStockByTypeAndName(new Product(name, price, type));
 
         // then
+        assertThat(stockAfterFirstReduction).isEqualTo(initialStock - firstReduce);
         assertThat(secondResult).isEqualTo(expectedResult);
         if (expectedResult) {
             assertThat(finalStock).isEqualTo(stockAfterFirstReduction - secondReduce);

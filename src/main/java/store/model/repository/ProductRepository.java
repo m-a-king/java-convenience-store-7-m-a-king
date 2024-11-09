@@ -46,18 +46,18 @@ public class ProductRepository {
         }
     }
 
-    public Product findByTypeAndName(String type, String name) {
+    public Product findProductByTypeAndName(String type, String name) {
         return info.get(type).getOrDefault(name, null);
     }
 
-    public List<Product> findAll() {
+    public List<Product> findAllProduct() {
         return info.values().stream()
                 .flatMap(innerMap -> innerMap.values().stream())
                 .toList();
     }
 
-    public int getStock(String type, String name) {
-        return stock.getOrDefault(type, Collections.emptyMap()).getOrDefault(name, 0);
+    public int findStockByTypeAndName(Product product) {
+        return stock.getOrDefault(product.getPromotion(), Collections.emptyMap()).getOrDefault(product.getName(), 0);
     }
 
     public boolean reduceStock(String type, String name, int quantity) {
