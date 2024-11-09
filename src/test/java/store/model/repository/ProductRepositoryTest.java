@@ -98,7 +98,7 @@ class ProductRepositoryTest {
         int price = 1000;
 
         // when
-        int stock = productRepository.findStockByTypeAndName(new Product(name, price, type));
+        int stock = productRepository.findStockByProduct(new Product(name, price, type));
 
         // then
         assertThat(stock).isEqualTo(10);
@@ -114,7 +114,7 @@ class ProductRepositoryTest {
         String name = "콜라";
         int price = 1000;
 
-        int initialStock = productRepository.findStockByTypeAndName(new Product(name, price, type));
+        int initialStock = productRepository.findStockByProduct(new Product(name, price, type));
         int quantityToReduce = 5;
 
         // when
@@ -122,7 +122,7 @@ class ProductRepositoryTest {
 
         // then
         assertThat(result).isTrue();
-        assertThat(productRepository.findStockByTypeAndName(new Product(name, price, type))).isEqualTo(initialStock - quantityToReduce);
+        assertThat(productRepository.findStockByProduct(new Product(name, price, type))).isEqualTo(initialStock - quantityToReduce);
     }
 
     @Test
@@ -135,7 +135,7 @@ class ProductRepositoryTest {
         String name = "콜라";
         int price = 1000;
 
-        int initialStock = productRepository.findStockByTypeAndName(new Product(name, price, type));
+        int initialStock = productRepository.findStockByProduct(new Product(name, price, type));
         int quantityToReduce = initialStock + 1;
 
         // when
@@ -143,7 +143,7 @@ class ProductRepositoryTest {
 
         // then
         assertThat(result).isFalse(); // 감소 실패를 확인
-        assertThat(productRepository.findStockByTypeAndName(new Product(name, price, type))).isEqualTo(initialStock);
+        assertThat(productRepository.findStockByProduct(new Product(name, price, type))).isEqualTo(initialStock);
     }
 
     @ParameterizedTest
@@ -155,14 +155,14 @@ class ProductRepositoryTest {
     void reduceStock_ShouldHandleConsecutiveReductions(String type, String name, int firstReduce, int secondReduce, int price, boolean expectedResult) throws IOException {
         // given
         productRepository.loadProducts(TEST_PRODUCT_FILE_PATH);
-        int initialStock = productRepository.findStockByTypeAndName(new Product(name, price, type));
+        int initialStock = productRepository.findStockByProduct(new Product(name, price, type));
 
         // when
         productRepository.reduceStock(type, name, firstReduce);
-        int stockAfterFirstReduction = productRepository.findStockByTypeAndName(new Product(name, price, type));
+        int stockAfterFirstReduction = productRepository.findStockByProduct(new Product(name, price, type));
 
         boolean secondResult = productRepository.reduceStock(type, name, secondReduce);
-        int finalStock = productRepository.findStockByTypeAndName(new Product(name, price, type));
+        int finalStock = productRepository.findStockByProduct(new Product(name, price, type));
 
         // then
         assertThat(stockAfterFirstReduction).isEqualTo(initialStock - firstReduce);

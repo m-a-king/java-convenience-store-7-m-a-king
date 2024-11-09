@@ -56,8 +56,11 @@ public class ProductRepository {
                 .toList();
     }
 
-    public int findStockByTypeAndName(Product product) {
-        return stock.getOrDefault(product.getPromotion(), Collections.emptyMap()).getOrDefault(product.getName(), 0);
+    public int findStockByProduct(Product product) {
+        if (product.getPromotion().equals("null")) {
+            return stock.get("regular").getOrDefault(product.getName(), 0);
+        }
+        return stock.get("promotion").getOrDefault(product.getName(), 0);
     }
 
     public boolean reduceStock(String type, String name, int quantity) {
