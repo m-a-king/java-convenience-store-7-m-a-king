@@ -1,7 +1,7 @@
 package store.config;
 
 import store.model.domain.Product;
-import store.model.domain.ProductType;
+import store.constant.ProductType;
 
 import java.util.Map;
 

@@ -6,7 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import store.model.domain.Product;
-import store.model.domain.ProductType;
+import store.constant.ProductType;
 
 import java.io.IOException;
 import java.util.stream.Stream;

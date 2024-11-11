@@ -1,5 +1,7 @@
 package store.model.domain;
 
+import store.constant.ProductType;
+
 public class Product {
     private final String name;
     private final int price;

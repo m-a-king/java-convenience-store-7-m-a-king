@@ -1,8 +1,8 @@
-package store.view.constant;
+package store.constant;
 
 public class ReceiptLabels {
     public static final String HEADER = "\n==============W 편의점================";
-    public static final String GIFT_HEADER = "==============증\t정================";
+    public static final String GIFT_HEADER = "=============증\t정===============";
     public static final String FOOTER = "====================================";
     public static final String TOTAL_LABEL = "총구매액";
     public static final String EVENT_DISCOUNT_LABEL = "행사할인";

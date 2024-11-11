@@ -1,4 +1,4 @@
-package store.view.constant;
+package store.constant;
 
 public class Discounts {
     public static final String PROMOTION_MESSAGE_FORMAT = "\n현재 %s은(는) %d개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)%n";

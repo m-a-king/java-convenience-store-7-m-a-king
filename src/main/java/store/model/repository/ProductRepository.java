@@ -4,7 +4,7 @@ import store.Message.ErrorMessage;
 import store.config.DataInitializer;
 import store.config.ProductsData;
 import store.model.domain.Product;
-import store.model.domain.ProductType;
+import store.constant.ProductType;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package store.view.constant;
+package store.constant;
 
 public class OutputFormats {
     public static final String HEADER_FORMAT = "%-15s\t%-10s\t%-5s\n";

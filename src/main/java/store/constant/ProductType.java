@@ -1,4 +1,4 @@
-package store.model.domain;
+package store.constant;
 
 public enum ProductType {
     REGULAR,

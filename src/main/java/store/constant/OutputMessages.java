@@ -1,4 +1,4 @@
-package store.view.constant;
+package store.constant;
 
 public class OutputMessages {
     public static final String WELCOME_MESSAGE = "안녕하세요. W편의점입니다.";
