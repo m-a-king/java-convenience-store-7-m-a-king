@@ -1,87 +1,70 @@
 package store.model.repository;
 
+import store.Message.ErrorMessage;
+import store.config.DataInitializer;
+import store.config.ProductsData;
 import store.model.domain.Product;
+import store.model.domain.ProductType;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ProductRepository {
-    private final Map<String, Map<String, Product>> info = new LinkedHashMap<>();
-    private final Map<String, Map<String, Integer>> stock = new HashMap<>();
+    public static final String DEFAULT_PRODUCT_FILE_PATH = "src/main/resources/products.md";
 
-    public void loadProducts(String filePath) throws IOException {
-        Map<String, Product> regularProducts = new LinkedHashMap<>();
-        Map<String, Product> promotionProducts = new LinkedHashMap<>();
-        Map<String, Integer> regularStocks = new HashMap<>();
-        Map<String, Integer> promotionStock = new HashMap<>();
+    private final Map<ProductType, Map<String, Product>> info = new LinkedHashMap<>();
+    private final Map<ProductType, Map<String, Integer>> stock = new HashMap<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            br.readLine(); // 헤더 생략
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                String name = data[0];
-                int price = Integer.parseInt(data[1]);
-                int quantity = Integer.parseInt(data[2]);
-                String promotion = data[3];
-
-                Product product = new Product(name, price, promotion);
-
-                if (promotion.equals("null")) {
-                    regularProducts.put(name, product);
-                    regularStocks.put(name, quantity);
-                } else {
-                    promotionProducts.put(name, product);
-                    promotionStock.put(name, quantity);
-                }
-            }
-
-            info.put("regular", regularProducts);
-            info.put("promotion", promotionProducts);
-            stock.put("regular", regularStocks);
-            stock.put("promotion", promotionStock);
+    public ProductRepository(String filePath) {
+        DataInitializer initializer = DataInitializer.getInstance();
+        try {
+            ProductsData productsData = initializer.loadProducts(filePath);
+            this.info.putAll(productsData.info());
+            this.stock.putAll(productsData.stock());
+        } catch (IOException e) {
+            throw new RuntimeException(ErrorMessage.FILE_ERROR.getMessage(filePath));
         }
     }
 
-    public Product findProductByTypeAndName(String type, String name) {
-        return info.get(type).getOrDefault(name, null);
+    public ProductRepository() {
+        this(DEFAULT_PRODUCT_FILE_PATH);
     }
 
-    public List<Product> findAllProduct() {
+    public List<Product> findAllInfo() {
         return info.values().stream()
                 .flatMap(innerMap -> innerMap.values().stream())
                 .toList();
     }
 
-    public int findStockByProduct(Product product) {
-        Map<String, Integer> typeStock = getStockMapByProduct(product);
-        return typeStock.getOrDefault(product.getName(), 0);
+    public Product findInfo(String name, ProductType productType) {
+        Map<String, Product> typeInfo = info.get(productType);
+        return typeInfo.getOrDefault(name, null);
     }
 
-    public boolean reduceStock(Product product, int quantity) {
-        Map<String, Integer> typeStock = getStockMapByProduct(product);
+    public int findStock(String name, ProductType productType) {
+        Map<String, Integer> typeStock = stock.get(productType);
+        return typeStock.getOrDefault(name, 0);
+    }
 
-        if (typeStock == null || !typeStock.containsKey(product.getName())) {
-            return false;
-        }
+    public boolean reduceStock(String name, ProductType productType, int quantity) {
+        Map<String, Integer> typeStocks = stock.get(productType);
+        checkStock(name, typeStocks);
 
-        int currentStock = typeStock.get(product.getName());
+        int currentStock = typeStocks.get(name);
         if (currentStock < quantity) {
             return false;
         }
 
-        typeStock.put(product.getName(), currentStock - quantity);
+        typeStocks.put(name, currentStock - quantity);
         return true;
     }
 
-    private Map<String, Integer> getStockMapByProduct(Product product) {
-        if (product.getPromotion().equals("null")) {
-            return stock.get("regular");
+    private static void checkStock(String name, Map<String, Integer> stock) {
+        if (stock == null || !stock.containsKey(name)) {
+            throw new IllegalStateException(ErrorMessage.NON_EXISTENT_PRODUCT.getMessage());
         }
-        return stock.get("promotion");
     }
-
 }
