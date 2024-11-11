@@ -22,4 +22,11 @@ public class Product {
     public String getPromotion() {
         return promotion;
     }
+
+    public ProductType isPromotion() {
+        if (promotion.equals("null")) {
+            return ProductType.REGULAR;
+        }
+        return ProductType.PROMOTION;
+    }
 }
