@@ -37,8 +37,8 @@ public class ReceiptCalculationService {
     private int calculateMembershipDiscount(int regularPrice, boolean isMembership) {
         if (isMembership) {
             double discountPrice = regularPrice * -Discounts.MEMBERSHIP_DISCOUNT_RATE;
-            if (Math.abs(discountPrice) > 8000) {
-                return -8000;
+            if (Math.abs(discountPrice) > Discounts.MAX_MEMBERSHIP_DISCOUNT) {
+                return -Discounts.MAX_MEMBERSHIP_DISCOUNT;
             }
             return (int) discountPrice;
         }
