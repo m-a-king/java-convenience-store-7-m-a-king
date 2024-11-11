@@ -52,39 +52,5 @@ class OutputViewTest {
         );
     }
 
-    @Test
-    @DisplayName("구매 요청 메시지를 출력한다")
-    void printPurchasePrompt() {
-        // when
-        outputView.printPurchasePrompt();
 
-        // then
-        assertThat(outContent.toString()).isEqualTo(
-                "\n구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])\n"
-        );
-    }
-
-    @Test
-    @DisplayName("멤버십 할인 요청 메시지를 출력한다")
-    void printMembershipPrompt() {
-        // when
-        outputView.printMembershipPrompt();
-
-        // then
-        assertThat(outContent.toString()).isEqualTo(
-                "\n멤버십 할인을 받으시겠습니까? (Y/N)\n"
-        );
-    }
-
-    @Test
-    @DisplayName("추가 구매 요청 메시지를 출력한다")
-    void printAdditionalPurchasePrompt() {
-        // when
-        outputView.printAdditionalPurchasePrompt();
-
-        // then
-        assertThat(outContent.toString()).isEqualTo(
-                "\n감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)\n"
-        );
-    }
 }

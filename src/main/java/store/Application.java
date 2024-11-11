@@ -1,5 +1,6 @@
 package store;
 
+import camp.nextstep.edu.missionutils.Console;
 import store.controller.StoreController;
 import store.model.repository.ProductRepository;
 import store.model.repository.PromotionRepository;
@@ -21,5 +22,6 @@ public class Application {
         StoreController storeController = new StoreController(inputView, outputView, storeService, receiptCalculationService);
 
         storeController.run();
+        Console.close();
     }
 }

@@ -47,8 +47,8 @@ public class StoreController {
     private Map<String, Integer> askPurchase() {
         while (true) {
             try {
-                outputView.printPurchasePrompt();
-                Map<String, Integer> shoppingCart = StringParser.parseToMap(inputView.readUserInput());
+                String item = inputView.readItem();
+                Map<String, Integer> shoppingCart = StringParser.parseToMap(item);
                 storeService.checkStock(shoppingCart);
                 return shoppingCart;
             } catch (IllegalArgumentException | IllegalStateException e) {
@@ -65,25 +65,23 @@ public class StoreController {
 
     private void processPromotionForItem(ShoppingCartCheck item) {
         while (item.isCanReceiveAdditionalFree()) {
-            outputView.printPromotionMessage(item);
-            String userInput = inputView.readUserInput();
-            if (userInput.equals("Y")) {
+            String decision = inputView.readPromotionDecision(item.getProductName());
+            if (decision.equals("Y")) {
                 item.acceptFree();
                 return;
             }
-            if (userInput.equals("N")) {
+            if (decision.equals("N")) {
                 return;
             }
             System.out.println(ErrorMessage.GENERIC_ERROR.getMessage());
         }
 
         while (item.isActivePromotion() && item.getFullPriceCount() > 0) {
-            outputView.printRegularPriceMessage(item);
-            String userInput = inputView.readUserInput();
-            if (userInput.equals("Y")) {
+            String decision = inputView.readFullPriceDecision(item.getProductName(), item.getFullPriceCount());
+            if (decision.equals("Y")) {
                 return;
             }
-            if (userInput.equals("N")) {
+            if (decision.equals("N")) {
                 item.rejectFullPrice();
                 return;
             }
@@ -93,12 +91,11 @@ public class StoreController {
 
     private boolean processMembership() {
         while (true) {
-            outputView.printMembershipPrompt();
-            String userInput = inputView.readUserInput();
-            if (userInput.equals("Y")) {
+            String decision = inputView.readMembershipDecision();
+            if (decision.equals("Y")) {
                 return true;
             }
-            if (userInput.equals("N")) {
+            if (decision.equals("N")) {
                 return false;
             }
             System.out.println(ErrorMessage.GENERIC_ERROR.getMessage());
@@ -107,12 +104,12 @@ public class StoreController {
 
     private boolean askAdditionalPurchase() {
         while (true) {
-            outputView.printAdditionalPurchasePrompt();
-            String userInput = inputView.readUserInput();
-            if (userInput.equals("Y")) {
+            String decision = inputView.readAdditionalPurchaseDecision();
+            if (decision.equals("Y")) {
+                System.out.println();
                 return true;
             }
-            if (userInput.equals("N")) {
+            if (decision.equals("N")) {
                 return false;
             }
             System.out.println(ErrorMessage.GENERIC_ERROR.getMessage());

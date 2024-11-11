@@ -3,7 +3,6 @@ package store.view;
 import store.dto.ProductWithStockDto;
 import store.model.domain.ShoppingCartCheck;
 import store.model.ReceiptTotals;
-import store.constant.Discounts;
 import store.constant.OutputFormats;
 import store.constant.OutputMessages;
 import store.constant.ReceiptLabels;
@@ -11,6 +10,7 @@ import store.constant.ReceiptLabels;
 import java.util.List;
 
 public class OutputView {
+    private static final String REGULAR = "null";
 
     public void printHelloMessage() {
         System.out.println(OutputMessages.WELCOME_MESSAGE);
@@ -19,26 +19,6 @@ public class OutputView {
     public void printProducts(List<ProductWithStockDto> products) {
         System.out.println(OutputMessages.CURRENT_PRODUCTS_MESSAGE);
         products.forEach(this::printProduct);
-    }
-
-    public void printPurchasePrompt() {
-        System.out.println(OutputMessages.PURCHASE_PROMPT_MESSAGE);
-    }
-
-    public void printMembershipPrompt() {
-        System.out.println(OutputMessages.MEMBERSHIP_PROMPT_MESSAGE);
-    }
-
-    public void printPromotionMessage(ShoppingCartCheck dto) {
-        System.out.printf(Discounts.ADDITIONAL_FREE_MESSAGE_FORMAT, dto.getProductName());
-    }
-
-    public void printRegularPriceMessage(ShoppingCartCheck dto) {
-        System.out.printf(Discounts.REGULAR_PRICE_MESSAGE_FORMAT, dto.getProductName(), dto.getFullPriceCount());
-    }
-
-    public void printAdditionalPurchasePrompt() {
-        System.out.println(OutputMessages.ADDITIONAL_PURCHASE_PROMPT_MESSAGE);
     }
 
     public void printReceipt(List<ShoppingCartCheck> shoppingCartChecks, ReceiptTotals totals) {
@@ -50,7 +30,7 @@ public class OutputView {
 
     private void printProduct(ProductWithStockDto product) {
         String promotion = product.promotion();
-        if (promotion.equals(Discounts.REGULAR)) {
+        if (promotion.equals(REGULAR)) {
             promotion = OutputMessages.EMPTY_STRING;
         }
         if (product.stock() == 0) {
