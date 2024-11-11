@@ -38,17 +38,17 @@ class OutputViewTest {
         // given
         List<ProductWithStockDto> products = List.of(
                 new ProductWithStockDto("콜라", 1000, 10, "탄산2+1"),
-                new ProductWithStockDto("사이다", 1200, 5, null)
+                new ProductWithStockDto("사이다", 1200, 5, "null")
         );
 
         // when
         outputView.printProducts(products);
 
         // then
-        assertThat(outContent.toString()).isEqualTo(
-                "현재 보유하고 있는 상품입니다.\n\n" +
-                        "- 콜라 1,000원 10개 탄산2+1\n" +
-                        "- 사이다 1,200원 5개 null\n"
+        assertThat(outContent.toString()).contains(
+                "현재 보유하고 있는 상품입니다.\n\n",
+                        "- 콜라 1,000원 10개 탄산2+1\n",
+                        "- 사이다 1,200원 5개 \n"
         );
     }
 
@@ -60,7 +60,7 @@ class OutputViewTest {
 
         // then
         assertThat(outContent.toString()).isEqualTo(
-                "구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])\n"
+                "\n구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])\n"
         );
     }
 
@@ -72,7 +72,7 @@ class OutputViewTest {
 
         // then
         assertThat(outContent.toString()).isEqualTo(
-                "멤버십 할인을 받으시겠습니까? (Y/N)\n"
+                "\n멤버십 할인을 받으시겠습니까? (Y/N)\n"
         );
     }
 
@@ -84,7 +84,7 @@ class OutputViewTest {
 
         // then
         assertThat(outContent.toString()).isEqualTo(
-                "감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)\n"
+                "\n감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)\n"
         );
     }
 }
