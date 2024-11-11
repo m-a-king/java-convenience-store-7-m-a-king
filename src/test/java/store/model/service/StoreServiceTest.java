@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import store.Message.ErrorMessage;
 import store.dto.ProductWithStockDto;
-import store.dto.ShoppingCartCheck;
+import store.model.domain.ShoppingCartCheck;
 import store.model.repository.ProductRepository;
 import store.model.repository.PromotionRepository;
 

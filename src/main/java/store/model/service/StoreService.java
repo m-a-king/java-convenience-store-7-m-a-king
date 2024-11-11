@@ -3,7 +3,7 @@ package store.model.service;
 import camp.nextstep.edu.missionutils.DateTimes;
 import store.Message.ErrorMessage;
 import store.dto.ProductWithStockDto;
-import store.dto.ShoppingCartCheck;
+import store.model.domain.ShoppingCartCheck;
 import store.model.domain.Product;
 import store.constant.ProductType;
 import store.model.domain.Promotion;

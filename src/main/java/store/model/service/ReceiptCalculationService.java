@@ -1,6 +1,6 @@
 package store.model.service;
 
-import store.dto.ShoppingCartCheck;
+import store.model.domain.ShoppingCartCheck;
 import store.model.ReceiptTotals;
 import store.constant.Discounts;
 

@@ -1,7 +1,7 @@
 package store.view;
 
 import store.dto.ProductWithStockDto;
-import store.dto.ShoppingCartCheck;
+import store.model.domain.ShoppingCartCheck;
 import store.model.ReceiptTotals;
 import store.constant.Discounts;
 import store.constant.OutputFormats;
