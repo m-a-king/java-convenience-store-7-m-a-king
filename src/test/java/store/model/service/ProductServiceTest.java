@@ -3,11 +3,13 @@ package store.model.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import store.dto.ProductWithStockDto;
-import store.model.domain.Product;
+import store.model.domain.ProductType;
 import store.model.repository.ProductRepository;
+import store.model.repository.PromotionRepository;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,10 +21,9 @@ class ProductServiceTest {
     private ProductRepository productRepository;
 
     @BeforeEach
-    void setUp() throws IOException {
-        productRepository = new ProductRepository();
-        productService = new ProductService(productRepository);
-        productService.loadProducts(TEST_PRODUCT_FILE_PATH);
+    void setUp() {
+        productRepository = new ProductRepository(TEST_PRODUCT_FILE_PATH);
+        productService = new ProductService(productRepository, new PromotionService(new PromotionRepository()));
     }
 
     @Test
@@ -61,22 +62,20 @@ class ProductServiceTest {
         assertThat(dto.promotion()).isEqualTo(promotion);
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(ProductType.class)
     @DisplayName("재고 감소가 정상적으로 이루어지고, true를 반환한다")
-    void reduceProductStock_ShouldReturnTrue_WhenStockIsReduced() {
+    void reduceProductStock_ShouldReturnTrue_WhenStockIsReduced(ProductType productType) {
         // given
         String name = "콜라";
-        int price = 1000;
-        String type = "promotion";
-        Product cola = new Product(name, price, type);
-
+        int initialStock = 10;  // 초기 재고 값 설정
         int quantity = 5;
 
         // when
-        boolean result = productService.reduceProductStock(cola, quantity);
+        boolean result = productService.reduceProductStock(name, productType, quantity);
 
         // then
         assertThat(result).isTrue();
-        assertThat(productRepository.findStockByProduct(cola)).isEqualTo(5);
+        assertThat(productRepository.findStock(name, productType)).isEqualTo(initialStock - quantity);
     }
 }
