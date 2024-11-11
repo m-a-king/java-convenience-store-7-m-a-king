@@ -30,7 +30,7 @@ public class OutputView {
     }
 
     public void printPromotionMessage(ShoppingCartCheck dto) {
-        System.out.printf(Discounts.PROMOTION_MESSAGE_FORMAT, dto.getProductName(), dto.getRequestCount());
+        System.out.printf(Discounts.ADDITIONAL_FREE_MESSAGE_FORMAT, dto.getProductName());
     }
 
     public void printRegularPriceMessage(ShoppingCartCheck dto) {

@@ -123,7 +123,7 @@ public class StoreService {
 
         int fullPriceCount = calculateFullPriceCount(promotionCount, buy, get, regularCount);
         int freeCount = calculateFreeCount(promotionCount, buy, get);
-        boolean canReceiveAdditionalFree = calculateAdditionalFree(requestedQuantity, buy, get, regularCount);
+        boolean canReceiveAdditionalFree = calculateAdditionalFree(requestedQuantity, buy, get, regularCount, promotionStock);
 
         return new ShoppingCartCheck(productName, productPrice, requestedQuantity, regularCount, promotionCount, fullPriceCount, freeCount, canReceiveAdditionalFree, isActivePromotion);
     }
@@ -159,7 +159,7 @@ public class StoreService {
         return promotionCount / (buy + get);
     }
 
-    private boolean calculateAdditionalFree(int requestedQuantity, int buy, int get, int regularCount) {
-        return requestedQuantity % (buy + get) == buy && regularCount == 0;
+    private boolean calculateAdditionalFree(int requestedQuantity, int buy, int get, int regularCount, int promotionStock) {
+        return ((requestedQuantity % (buy + get)) == buy) && regularCount == 0 && promotionStock > requestedQuantity;
     }
 }
