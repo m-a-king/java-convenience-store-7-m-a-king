@@ -1,36 +1,31 @@
 package store.model.repository;
 
+import store.Message.ErrorMessage;
+import store.config.DataInitializer;
 import store.model.domain.Promotion;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class PromotionRepository {
+    public static final String DEFAULT_PROMOTIONS_FILE_PATH = "src/main/resources/promotions.md";
     private final Map<String, Promotion> promotions = new LinkedHashMap<>();
 
-    public void loadPromotions(String filePath) throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            br.readLine(); // 헤더 생략
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                String name = data[0];
-                int buy = Integer.parseInt(data[1]);
-                int get = Integer.parseInt(data[2]);
-                LocalDate startDate = LocalDate.parse(data[3]);
-                LocalDate endDate = LocalDate.parse(data[4]);
-
-                Promotion promotion = new Promotion(name, buy, get, startDate, endDate);
-                promotions.put(name, promotion);
-            }
+    public PromotionRepository(String filePath) {
+        DataInitializer initializer = DataInitializer.getInstance();
+        try {
+            Map<String, Promotion> promotionData = initializer.loadPromotions(filePath);
+            this.promotions.putAll(promotionData);
+        } catch (IOException e) {
+            throw new RuntimeException(ErrorMessage.FILE_ERROR.getMessage(filePath));
         }
+    }
+
+    public PromotionRepository() {
+        this(DEFAULT_PROMOTIONS_FILE_PATH);
     }
 
     public Promotion findByName(String name) {
